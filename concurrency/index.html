@@ -1,0 +1,612 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>并发 (Concurrency) - The Embedded Rust Book (中文版)</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-c618841a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-8bf7747b.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The Embedded Rust Book (中文版)</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/MeringGao/rust-embedded-book-zh" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="并发-concurrency"><a class="header" href="#并发-concurrency">并发 (Concurrency)</a></h1>
+<p>当程序的不同部分可能在不同时间或乱序执行时, 就会发生并发 (Concurrency). 在嵌入式环境中, 这包括:</p>
+<ul>
+<li>中断处理程序 (Interrupt Handler) — 在关联的中断 (Interrupt) 发生时执行</li>
+<li>各种形式的多线程 (Multithreading) — 微处理器定期在程序的不同部分之间切换</li>
+<li>在某些系统中, 多核微处理器 — 每个核心可以同时独立运行程序的不同部分</li>
+</ul>
+<p>由于许多嵌入式程序需要处理中断, 并发迟早会出现, 这也是许多微妙且棘手的 bug 容易发生的地方. 幸运的是, Rust 提供了一系列抽象和安全保证来帮助我们编写正确的代码.</p>
+<h2 id="无并发"><a class="header" href="#无并发">无并发</a></h2>
+<p>嵌入式程序最简单的并发形式就是无并发: 软件由一个不断运行的主循环 (Main Loop) 组成, 完全没有中断. 有时这种方案非常适合手头的问题! 通常, 你的循环会读取一些输入, 进行一些处理, 然后写入一些输出.</p>
+<pre><code class="language-rust ignore">#[entry]
+fn main() {
+    let peripherals = setup_peripherals();
+    loop {
+        let inputs = read_inputs(&amp;peripherals);
+        let outputs = process(inputs);
+        write_outputs(&amp;peripherals, outputs);
+    }
+}</code></pre>
+<p>因为没有并发, 所以无需担心在程序的不同部分之间共享数据, 也无需同步对外设 (Peripheral) 的访问. 如果这种简单的方案能够满足需求, 那么它就是一个很好的选择.</p>
+<h2 id="全局可变数据"><a class="header" href="#全局可变数据">全局可变数据</a></h2>
+<p>与非嵌入式 Rust 不同, 我们通常无法奢侈地在堆 (Heap) 上分配内存并把对该数据的引用传递给新创建的线程. 相反, 我们的中断处理程序可能在任何时刻被调用, 并且必须知道如何访问我们使用的任何共享内存. 在最底层, 这意味着我们必须有<em>静态分配 (Statically Allocated)</em> 的可变内存, 这样中断处理程序和主代码都可以引用它.</p>
+<p>在 Rust 中, 这种 <a href="https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html#accessing-or-modifying-a-mutable-static-variable"><code>static mut</code></a> 变量的读写总是 <code>unsafe</code> 的, 因为如果不特别小心, 可能会触发竞态条件 (Race Condition) — 在这种情况下, 你对变量的访问可能会被一个同样访问该变量的中断中途打断.</p>
+<p>举例说明这种行为如何在代码中引起微妙的错误, 考虑一个嵌入式程序: 它在一秒钟内对某个输入信号的上升沿进行计数 (一个频率计数器):</p>
+<pre><code class="language-rust ignore">static mut COUNTER: u32 = 0;
+
+#[entry]
+fn main() -&gt; ! {
+    set_timer_1hz();
+    let mut last_state = false;
+    loop {
+        let state = read_signal_level();
+        if state &amp;&amp; !last_state {
+            // 危险 - 实际上并不安全! 可能导致数据竞争
+            // DANGER - Not actually safe! Could cause data races.
+            unsafe { COUNTER += 1 };
+        }
+        last_state = state;
+    }
+}
+
+#[interrupt]
+fn timer() {
+    unsafe { COUNTER = 0; }
+}</code></pre>
+<p>每秒, 定时器中断把计数器重置为 0. 与此同时, 主循环持续测量信号, 当检测到从低到高的变化时, 把计数器加 1. 我们不得不使用 <code>unsafe</code> 来访问 <code>COUNTER</code>, 因为它是 <code>static mut</code>, 这意味着我们在向编译器承诺不会引发任何未定义行为 (Undefined Behaviour). 你能发现竞态条件吗? 对 <code>COUNTER</code> 的自增操作<em>不</em>保证是原子的 (Atomic) — 事实上, 在大多数嵌入式平台上, 它会被拆分为加载 (load), 自增, 然后存储 (store). 如果中断在加载之后, 存储之前触发, 那么重置为 0 的操作将在中断返回后被忽略 — 这意味着我们会在该周期内多计一倍数量的跳变.</p>
+<h2 id="临界区-critical-section"><a class="header" href="#临界区-critical-section">临界区 (Critical Section)</a></h2>
+<p>那么, 对于数据竞争我们能做些什么呢? 一种简单的方法是使用<em>临界区</em> (Critical Section) — 一种禁用中断的上下文. 通过把主循环中对 <code>COUNTER</code> 的访问包裹在临界区里, 我们可以确保定时器中断不会在 <code>COUNTER</code> 自增完成之前触发:</p>
+<pre><code class="language-rust ignore">static mut COUNTER: u32 = 0;
+
+#[entry]
+fn main() -&gt; ! {
+    set_timer_1hz();
+    let mut last_state = false;
+    loop {
+        let state = read_signal_level();
+        if state &amp;&amp; !last_state {
+            // 新的临界区确保对 COUNTER 的同步访问
+            // New critical section ensures synchronised access to COUNTER
+            cortex_m::interrupt::free(|_| {
+                unsafe { COUNTER += 1 };
+            });
+        }
+        last_state = state;
+    }
+}
+
+#[interrupt]
+fn timer() {
+    unsafe { COUNTER = 0; }
+}</code></pre>
+<p>在本例中, 我们使用了 <code>cortex_m::interrupt::free</code>, 但其他平台也会有类似的在临界区中执行代码的机制. 这等价于: 禁用中断, 运行一些代码, 然后重新启用中断.</p>
+<p>注意我们不需要在定时器中断内部放置临界区, 原因有二:</p>
+<ul>
+<li>将 0 写入 <code>COUNTER</code> 不会受到竞态的影响, 因为我们没有读取它</li>
+<li>它也不会被 <code>main</code> 线程中断</li>
+</ul>
+<p>如果 <code>COUNTER</code> 被多个可能相互<em>抢占 (Preempt)</em> 的中断处理程序共享, 那么每个处理程序也都可能需要临界区.</p>
+<p>这解决了眼前的直接问题, 但我们仍然不得不编写大量需要仔细推理的 unsafe 代码, 而且我们可能没有必要地使用了临界区. 由于每个临界区都会暂时暂停中断处理, 因此会带来一些额外的代码大小以及更高的中断延迟和抖动 (中断处理可能需要更长时间, 处理的等待时间也会更不确定) 等成本. 这是否会成为问题取决于你的系统, 但通常情况下, 我们希望避免它.</p>
+<p>值得注意的是, 虽然临界区保证不会有中断触发, 但在多核系统上它并不提供互斥保证! 另一个核心可能正在访问与本核心相同的内存, 即使没有中断. 如果你使用多核, 则需要更强的同步原语.</p>
+<h2 id="原子访问-atomic-access"><a class="header" href="#原子访问-atomic-access">原子访问 (Atomic Access)</a></h2>
+<p>在某些平台上, 可以使用特殊的原子指令, 它们为读-改-写操作提供保证. 具体到 Cortex-M: <code>thumbv6</code> (Cortex-M0, Cortex-M0+) 仅提供原子的加载和存储指令, 而 <code>thumbv7</code> (Cortex-M3 及以上) 提供完整的比较并交换 (Compare and Swap, CAS) 指令. 这些 CAS 指令提供了一种替代粗暴地禁用所有中断的方案: 我们可以尝试自增, 大多数时候会成功, 但如果被打断, 它会自动重试整个自增操作. 这些原子操作即使在多个核心之间也是安全的.</p>
+<pre><code class="language-rust ignore">use core::sync::atomic::{AtomicUsize, Ordering};
+
+static COUNTER: AtomicUsize = AtomicUsize::new(0);
+
+#[entry]
+fn main() -&gt; ! {
+    set_timer_1hz();
+    let mut last_state = false;
+    loop {
+        let state = read_signal_level();
+        if state &amp;&amp; !last_state {
+            // 使用 `fetch_add` 原子地将 1 加到 COUNTER
+            // Use `fetch_add` to atomically add 1 to COUNTER
+            COUNTER.fetch_add(1, Ordering::Relaxed);
+        }
+        last_state = state;
+    }
+}
+
+#[interrupt]
+fn timer() {
+    // 使用 `store` 直接将 0 写入 COUNTER
+    // Use `store` to write 0 directly to COUNTER
+    COUNTER.store(0, Ordering::Relaxed)
+}</code></pre>
+<p>这一次 <code>COUNTER</code> 是一个安全的 <code>static</code> 变量. 多亏了 <code>AtomicUsize</code> 类型, <code>COUNTER</code> 可以安全地从中断处理程序和主线程中被修改, 而无需禁用中断. 在可能的情况下, 这是更好的解决方案 — 但你的平台可能并不支持它.</p>
+<p>关于 <a href="https://doc.rust-lang.org/core/sync/atomic/enum.Ordering.html"><code>Ordering</code></a> 的说明: 它会影响编译器和硬件如何重排指令, 并且对缓存可见性也有影响. 假设目标是单核平台, <code>Relaxed</code> 已经足够, 并且在这种情况下是最高效的选择. 更严格的排序会导致编译器在原子操作周围发出内存屏障; 至于是否需要, 这取决于你使用原子操作的目的! 原子模型的精确细节比较复杂, 最好在其他地方详细描述.</p>
+<p>有关原子操作和排序的更多细节, 请参见 <a href="https://doc.rust-lang.org/nomicon/atomics.html">nomicon</a>.</p>
+<h2 id="抽象-send-和-sync"><a class="header" href="#抽象-send-和-sync">抽象, Send 和 Sync</a></h2>
+<p>上面的解决方案都不太理想. 它们需要非常仔细地检查 <code>unsafe</code> 块, 而且不够符合人体工程学. 在 Rust 中我们一定能做得更好!</p>
+<p>我们可以把计数器抽象为一个安全的接口, 可以在代码的任何其他地方安全地使用. 在这个例子中, 我们将使用基于临界区的计数器, 但你也可以用原子操作做一些非常类似的事情.</p>
+<pre><code class="language-rust ignore">use core::cell::UnsafeCell;
+use cortex_m::interrupt;
+
+// 我们的计数器只是对 UnsafeCell&lt;u32&gt; 的包装, 它是 Rust 内部可变性
+// (Interior Mutability) 的核心. 通过使用内部可变性, 我们可以让
+// COUNTER 成为 `static` 而不是 `static mut`, 同时仍然能够修改其计数值.
+// Our counter is just a wrapper around UnsafeCell&lt;u32&gt;, which is the heart
+// of interior mutability in Rust. By using interior mutability, we can have
+// COUNTER be `static` instead of `static mut`, but still able to mutate
+// its counter value.
+struct CSCounter(UnsafeCell&lt;u32&gt;);
+
+const CS_COUNTER_INIT: CSCounter = CSCounter(UnsafeCell::new(0));
+
+impl CSCounter {
+    pub fn reset(&amp;self, _cs: &amp;interrupt::CriticalSection) {
+        // 由于要求传入一个 CriticalSection, 我们就知道
+        // 当前一定是在临界区内运行, 因此可以放心地
+        // 使用这个 unsafe 块 (调用 UnsafeCell::get 所需).
+        // By requiring a CriticalSection be passed in, we know we must
+        // be operating inside a CriticalSection, and so can confidently
+        // use this unsafe block (required to call UnsafeCell::get).
+        unsafe { *self.0.get() = 0 };
+    }
+
+    pub fn increment(&amp;self, _cs: &amp;interrupt::CriticalSection) {
+        unsafe { *self.0.get() += 1 };
+    }
+}
+
+// 允许静态 CSCounter, 详见下文.
+// Required to allow static CSCounter. See explanation below.
+unsafe impl Sync for CSCounter {}
+
+// COUNTER 不再是 `mut`, 因为它使用了内部可变性;
+// 因此访问它也不再需要 unsafe 块.
+// COUNTER is no longer `mut` as it uses interior mutability;
+// therefore it also no longer requires unsafe blocks to access.
+static COUNTER: CSCounter = CS_COUNTER_INIT;
+
+#[entry]
+fn main() -&gt; ! {
+    set_timer_1hz();
+    let mut last_state = false;
+    loop {
+        let state = read_signal_level();
+        if state &amp;&amp; !last_state {
+            // 这里没有 unsafe!
+            // No unsafe here!
+            interrupt::free(|cs| COUNTER.increment(cs));
+        }
+        last_state = state;
+    }
+}
+
+#[interrupt]
+fn timer() {
+    // 我们确实需要在这里进入一个临界区,
+    // 只是为了获得一个有效的 cs 令牌,
+    // 即使我们知道没有其他中断会抢占它.
+    // We do need to enter a critical section here just to obtain a valid
+    // cs token, even though we know no other interrupt could pre-empt
+    // this one.
+    interrupt::free(|cs| COUNTER.reset(cs));
+
+    // 如果你真的想避免开销, 可以用 unsafe 代码生成一个伪造的
+    // CriticalSection:
+    // We could use unsafe code to generate a fake CriticalSection if we
+    // really wanted to, avoiding the overhead:
+    // let cs = unsafe { interrupt::CriticalSection::new() };
+}</code></pre>
+<p>我们已经把 <code>unsafe</code> 代码移到了精心设计的抽象内部, 现在的应用代码已经不包含任何 <code>unsafe</code> 块了.</p>
+<p>这个设计要求应用代码传入一个 <code>CriticalSection</code> 令牌: 这些令牌只能由 <code>interrupt::free</code> 安全地生成, 因此通过要求传入令牌, 我们就确保了当前是在临界区内部运行, 而无需自己实际加锁. 这种保证由编译器在静态时提供: <code>cs</code> 不会带来任何运行时开销. 如果我们有多个计数器, 它们都可以被传入同一个 <code>cs</code>, 而不需要嵌套多个临界区.</p>
+<p>这也引出了 Rust 中关于并发的一个重要主题: <a href="https://doc.rust-lang.org/nomicon/send-and-sync.html"><code>Send</code> 和 <code>Sync</code></a> trait. 概括地说, 当一个类型可以安全地移动到另一个线程时, 它就是 <code>Send</code>; 而当一个类型可以安全地在多个线程之间共享时, 它就是 <code>Sync</code>. 在嵌入式环境中, 我们认为中断是在与应用代码不同的线程中执行的, 因此被中断和主代码同时访问的变量必须是 <code>Sync</code> 的.</p>
+<p>对于 Rust 中的大多数类型, 这两个 trait 都会由编译器自动派生. 然而, 由于 <code>CSCounter</code> 包含一个 <a href="https://doc.rust-lang.org/core/cell/struct.UnsafeCell.html"><code>UnsafeCell</code></a>, 它不是 <code>Sync</code> 的, 因此我们不能创建 <code>static CSCounter</code>: <code>static</code> 变量<em>必须</em>是 <code>Sync</code> 的, 因为它们可以被多个线程访问.</p>
+<p>为了告诉编译器我们已经确保 <code>CSCounter</code> 在线程间共享确实是安全的, 我们显式地实现了 <code>Sync</code> trait. 与之前使用临界区的情况一样, 这仅在单核平台上才是安全的: 在多核平台上, 你需要采取更多的措施来确保安全性.</p>
+<h2 id="互斥锁-mutex"><a class="header" href="#互斥锁-mutex">互斥锁 (Mutex)</a></h2>
+<p>我们已经为计数器问题创建了一个有用的特定抽象, 但并发中还有许多常见的抽象.</p>
+<p><em>同步原语 (Synchronisation Primitive)</em> 之一就是互斥锁 (Mutex, mutual exclusion 的缩写). 这些结构确保对某个变量 (例如我们的计数器) 的独占访问. 一个线程可以尝试<em>加锁 (lock)</em> (或<em>获取 acquire</em>) 互斥锁, 然后要么立即成功, 要么阻塞等待加锁成功, 要么返回一个错误, 表示无法加锁. 在该线程持有锁的期间, 它被授予对被保护数据的访问权. 当该线程使用完毕后, 它<em>解锁 (unlock)</em> (或<em>释放 release</em>) 互斥锁, 允许其他线程再加锁. 在 Rust 中, 我们通常会使用 <a href="https://doc.rust-lang.org/core/ops/trait.Drop.html"><code>Drop</code></a> trait 来实现 unlock, 以确保互斥锁在超出作用域时一定会被释放.</p>
+<p>将互斥锁与中断处理程序一起使用可能会有些棘手: 通常情况下, 中断处理程序不能被阻塞 (Blocking), 而如果它阻塞等待主线程释放锁, 那将是特别灾难性的, 因为我们会因此<em>死锁 (Deadlock)</em> (由于执行停留在中断处理程序中, 主线程永远不会释放锁). 死锁本身并不被视为 unsafe: 即使在 safe Rust 中, 死锁也可能发生.</p>
+<p>为了完全避免这种行为, 我们可以实现一个需要临界区才能加锁的互斥锁, 就像我们的计数器示例那样. 只要临界区的持续时间和锁的持续时间一致, 我们就能确保对被包装变量的独占访问, 甚至无需跟踪互斥锁的加锁/解锁状态.</p>
+<p>事实上, <code>cortex_m</code> crate 已经为我们做了这件事! 我们本可以使用它来写计数器:</p>
+<pre><code class="language-rust ignore">use core::cell::Cell;
+use cortex_m::interrupt::Mutex;
+
+static COUNTER: Mutex&lt;Cell&lt;u32&gt;&gt; = Mutex::new(Cell::new(0));
+
+#[entry]
+fn main() -&gt; ! {
+    set_timer_1hz();
+    let mut last_state = false;
+    loop {
+        let state = read_signal_level();
+        if state &amp;&amp; !last_state {
+            interrupt::free(|cs|
+                COUNTER.borrow(cs).set(COUNTER.borrow(cs).get() + 1));
+        }
+        last_state = state;
+    }
+}
+
+#[interrupt]
+fn timer() {
+    // 我们仍然需要在这里进入临界区以满足 Mutex 的要求.
+    // We still need to enter a critical section here to satisfy the Mutex.
+    interrupt::free(|cs| COUNTER.borrow(cs).set(0));
+}</code></pre>
+<p>我们现在使用了 <a href="https://doc.rust-lang.org/core/cell/struct.Cell.html"><code>Cell</code></a>, 它和它的兄弟类型 <code>RefCell</code> 用于提供安全的内部可变性. 我们已经见过 <code>UnsafeCell</code>, 它是 Rust 内部可变性的最底层: 它允许你获得其值的多个可变引用, 但只能通过 unsafe 代码实现. <code>Cell</code> 类似于 <code>UnsafeCell</code>, 但它提供了一个安全的接口: 它只允许获取当前值的副本或替换当前值, 而不允许获取引用, 并且由于它不是 <code>Sync</code> 的, 所以它不能在多个线程之间共享. 这些限制使得它可以安全地使用, 但我们不能直接在 <code>static</code> 变量中使用它, 因为 <code>static</code> 必须是 <code>Sync</code> 的.</p>
+<p>那为什么上面的例子能工作呢? <code>Mutex&lt;T&gt;</code> 为任何是 <code>Send</code> 的 <code>T</code> 实现 <code>Sync</code> — 例如 <code>Cell</code>. 它之所以能安全地做到这一点, 是因为它只在临界区期间才提供对其内容的访问. 因此, 我们能够得到一个完全没有 unsafe 代码的安全计数器!</p>
+<p>这对于像我们的计数器 <code>u32</code> 这样简单的类型来说很棒, 但对于那些不是 <code>Copy</code> 的更复杂的类型呢? 嵌入式环境中一个非常常见的例子就是外设结构体, 它通常不是 <code>Copy</code> 的. 对于这种情况, 我们可以使用 <code>RefCell</code>.</p>
+<h2 id="共享外设"><a class="header" href="#共享外设">共享外设</a></h2>
+<p>使用 <code>svd2rust</code> 和类似抽象生成的设备 crate 通过强制要求某一外设结构体一次只能存在一个实例来提供对外设的安全访问. 这确保了安全性, 但使得从主线程和中断处理程序同时访问一个外设变得困难.</p>
+<p>为了安全地共享外设访问, 我们可以使用之前见到的 <code>Mutex</code>. 我们还需要使用 <a href="https://doc.rust-lang.org/core/cell/struct.RefCell.html"><code>RefCell</code></a>, 它使用运行时检查来确保一次只给出一个外设的引用. 这比普通的 <code>Cell</code> 开销更大, 但由于我们给出的是引用而不是副本, 所以必须确保一次只存在一个引用.</p>
+<p>最后, 我们还必须考虑如何在外设初始化完成之后把它移入共享变量中. 为此, 我们可以使用 <code>Option</code> 类型, 初始化为 <code>None</code>, 之后再设置为外设实例.</p>
+<pre><code class="language-rust ignore">use core::cell::RefCell;
+use cortex_m::interrupt::{self, Mutex};
+use stm32f4::stm32f405;
+
+static MY_GPIO: Mutex&lt;RefCell&lt;Option&lt;stm32f405::GPIOA&gt;&gt;&gt; =
+    Mutex::new(RefCell::new(None));
+
+#[entry]
+fn main() -&gt; ! {
+    // 获取外设单例 (Singleton) 并进行配置.
+    // 这个例子来自一个 svd2rust 生成的 crate,
+    // 但大多数嵌入式设备 crate 都与此类似.
+    // Obtain the peripheral singletons and configure it.
+    // This example is from an svd2rust-generated crate, but
+    // most embedded device crates will be similar.
+    let dp = stm32f405::Peripherals::take().unwrap();
+    let gpioa = &amp;dp.GPIOA;
+
+    // 某种配置函数.
+    // 假设它将 PA0 设置为输入, PA1 设置为输出.
+    // Some sort of configuration function.
+    // Assume it sets PA0 to an input and PA1 to an output.
+    configure_gpio(gpioa);
+
+    // 将 GPIOA 存储到互斥锁中, 完成移动.
+    // Store the GPIOA in the mutex, moving it.
+    interrupt::free(|cs| MY_GPIO.borrow(cs).replace(Some(dp.GPIOA)));
+    // 此后不能再使用 `gpioa` 或 `dp.GPIOA`,
+    // 而必须通过互斥锁来访问它.
+    // We can no longer use `gpioa` or `dp.GPIOA`, and instead have to
+    // access it via the mutex.
+
+    // 注意要在设置 MY_GPIO 之后才使能中断:
+    // 否则中断可能在它仍然包含 None 的时候触发,
+    // 而按当前写法 (带 `unwrap()`) 会发生 panic.
+    // Be careful to enable the interrupt only after setting MY_GPIO:
+    // otherwise the interrupt might fire while it still contains None,
+    // and as-written (with `unwrap()`), it would panic.
+    set_timer_1hz();
+    let mut last_state = false;
+    loop {
+        // 现在我们通过互斥锁以数字输入的方式读取状态
+        // We'll now read state as a digital input, via the mutex
+        let state = interrupt::free(|cs| {
+            let gpioa = MY_GPIO.borrow(cs).borrow();
+            gpioa.as_ref().unwrap().idr.read().idr0().bit_is_set()
+        });
+
+        if state &amp;&amp; !last_state {
+            // 当 PA0 检测到上升沿时, 把 PA1 置高.
+            // Set PA1 high if we've seen a rising edge on PA0.
+            interrupt::free(|cs| {
+                let gpioa = MY_GPIO.borrow(cs).borrow();
+                gpioa.as_ref().unwrap().odr.modify(|_, w| w.odr1().set_bit());
+            });
+        }
+        last_state = state;
+    }
+}
+
+#[interrupt]
+fn timer() {
+    // 这次在中断中我们只是清零 PA0.
+    // This time in the interrupt we'll just clear PA0.
+    interrupt::free(|cs| {
+        // 我们可以使用 `unwrap()`, 因为我们知道在设置 MY_GPIO 之前
+        // 中断不会被使能; 否则应该处理 None 值的可能性.
+        // We can use `unwrap()` because we know the interrupt wasn't enabled
+        // until after MY_GPIO was set; otherwise we should handle the potential
+        // for a None value.
+        let gpioa = MY_GPIO.borrow(cs).borrow();
+        gpioa.as_ref().unwrap().odr.modify(|_, w| w.odr1().clear_bit());
+    });
+}</code></pre>
+<p>内容有点多, 让我们把重要的几行拆解一下.</p>
+<pre><code class="language-rust ignore">static MY_GPIO: Mutex&lt;RefCell&lt;Option&lt;stm32f405::GPIOA&gt;&gt;&gt; =
+    Mutex::new(RefCell::new(None));</code></pre>
+<p>我们的共享变量现在是 <code>Mutex</code> 包装的 <code>RefCell</code>, 而 <code>RefCell</code> 中又包含一个 <code>Option</code>. <code>Mutex</code> 确保我们只能在临界区内访问它, 因此即使普通的 <code>RefCell</code> 不是 <code>Sync</code> 的, 它也能让该变量变成 <code>Sync</code>. <code>RefCell</code> 为我们提供了带引用的内部可变性, 这正是访问 <code>GPIOA</code> 所需要的. <code>Option</code> 允许我们先把变量初始化为空, 然后再把实际的值移入其中. 我们无法在静态时访问外设单例, 只能在运行时访问, 所以这是必需的.</p>
+<pre><code class="language-rust ignore">interrupt::free(|cs| MY_GPIO.borrow(cs).replace(Some(dp.GPIOA)));</code></pre>
+<p>在临界区内部, 我们可以调用互斥锁的 <code>borrow()</code>, 它会给我们一个 <code>RefCell</code> 的引用. 然后我们调用 <code>replace()</code> 把新值移入 <code>RefCell</code>.</p>
+<pre><code class="language-rust ignore">interrupt::free(|cs| {
+    let gpioa = MY_GPIO.borrow(cs).borrow();
+    gpioa.as_ref().unwrap().odr.modify(|_, w| w.odr1().set_bit());
+});</code></pre>
+<p>最后, 我们以一种安全且并发的方式使用了 <code>MY_GPIO</code>. 临界区照常阻止中断触发, 并允许我们借用互斥锁. 然后 <code>RefCell</code> 给我们一个 <code>&amp;Option&lt;GPIOA&gt;</code>, 并跟踪它被借用了多长时间 — 一旦该引用超出作用域, <code>RefCell</code> 就会更新以表明它不再被借用.</p>
+<p>由于我们无法从 <code>&amp;Option</code> 中移出 <code>GPIOA</code>, 所以需要使用 <code>as_ref()</code> 将其转换为 <code>&amp;Option&lt;&amp;GPIOA&gt;</code>, 然后我们才能对它调用 <code>unwrap()</code> 得到 <code>&amp;GPIOA</code>, 进而修改外设.</p>
+<p>如果我们需要一个对共享资源的可变引用, 那么应该改用 <code>borrow_mut</code> 和 <code>deref_mut</code>. 下面的代码展示了一个使用 TIM2 定时器的例子.</p>
+<pre><code class="language-rust ignore">use core::cell::RefCell;
+use core::ops::DerefMut;
+use cortex_m::interrupt::{self, Mutex};
+use cortex_m::asm::wfi;
+use stm32f4::stm32f405;
+
+static G_TIM: Mutex&lt;RefCell&lt;Option&lt;Timer&lt;stm32::TIM2&gt;&gt;&gt;&gt; =
+	Mutex::new(RefCell::new(None));
+
+#[entry]
+fn main() -&gt; ! {
+    let mut cp = cm::Peripherals::take().unwrap();
+    let dp = stm32f405::Peripherals::take().unwrap();
+
+    // 某种定时器配置函数.
+    // 假设它配置了 TIM2 定时器及其 NVIC 中断,
+    // 最后启动定时器.
+    // Some sort of timer configuration function.
+    // Assume it configures the TIM2 timer, its NVIC interrupt,
+    // and finally starts the timer.
+    let tim = configure_timer_interrupt(&amp;mut cp, dp);
+
+    interrupt::free(|cs| {
+        G_TIM.borrow(cs).replace(Some(tim));
+    });
+
+    loop {
+        wfi();
+    }
+}
+
+#[interrupt]
+fn timer() {
+    interrupt::free(|cs| {
+        if let Some(ref mut tim)) =  G_TIM.borrow(cs).borrow_mut().deref_mut() {
+            tim.start(1.hz());
+        }
+    });
+}
+</code></pre>
+<p>呼! 这虽然安全, 但也有点笨拙. 还有别的办法吗?</p>
+<h2 id="rtic"><a class="header" href="#rtic">RTIC</a></h2>
+<p>另一个选择是 <a href="https://rtic.rs/2/book/en">RTIC 框架</a>, 全称是 Real Time Interrupt-driven Concurrency (实时中断驱动的并发). 它强制执行静态优先级, 并跟踪对 <code>static mut</code> 变量 (称为“资源“) 的访问, 以静态地确保共享资源始终被安全地访问, 而无需始终进入临界区以及像 <code>RefCell</code> 那样使用引用计数. 这有很多优点, 例如保证不会发生死锁, 并且在时间和内存开销上都极低.</p>
+<p>RTIC 自带一个异步执行器, 因此你的软件任务是 <code>async</code> 函数, 除了常规的同步 API 之外, 你还可以使用 <code>async</code> API.</p>
+<p>该框架还包括其他特性, 例如消息传递, 它减少了对显式共享状态的需求, 以及在指定时间调度任务的能力, 这可以用于实现周期性任务. 查看 <a href="https://rtic.rs">相关文档</a> 获取更多信息!</p>
+<h2 id="embassy"><a class="header" href="#embassy">Embassy</a></h2>
+<p>Embassy 是一个专注于使用 Rust 中的 <code>async</code> / <code>await</code> 语法进行并发的库生态系统. embassy 的核心是它的 [异步执行器] (Asynchronous Executor), 它支持大多数常见的 MCU 架构.</p>
+<p>embassy 还采用了一站式 (battery-included) 方案, 提供了许多其他组件, 例如:</p>
+<ul>
+<li><a href="https://docs.rs/embassy-time/latest/embassy_time/">时间库</a></li>
+<li>多个还提供时间库支持的 HAL 库.</li>
+<li>用于同步原语的 <a href="https://docs.embassy.dev/embassy-sync/git/default/index.html">embassy-sync</a></li>
+</ul>
+<p>你可以查看 <a href="https://embassy.dev/">官网</a> 和 <a href="https://embassy.dev/book/">书籍</a> 获取更多信息.</p>
+<h2 id="实时操作系统-rtos"><a class="header" href="#实时操作系统-rtos">实时操作系统 (RTOS)</a></h2>
+<p>嵌入式并发的另一种常见模型是实时操作系统 (Real-Time Operating System, RTOS). 虽然目前在 Rust 中探索得还不多, 但它们在传统嵌入式开发中被广泛使用. 开源示例包括 <a href="https://freertos.org/">FreeRTOS</a> 和 <a href="http://chibios.org/">ChibiOS</a>. 这些 RTOS 支持运行多个应用程序线程, CPU 在这些线程之间切换, 既可以在线程主动让出控制权时切换 (称为协作式多任务 (Cooperative Multitasking)), 也可以基于周期性定时器或中断进行切换 (抢占式多任务 (Preemptive Multitasking)). RTOS 通常提供互斥锁和其他同步原语, 并且经常与 DMA 引擎等硬件特性配合使用.</p>
+<p>在撰写本文时, Rust 中的 RTOS 示例还不多, 但这是一个有趣的领域, 让我们拭目以待!</p>
+<h2 id="多核"><a class="header" href="#多核">多核</a></h2>
+<p>在嵌入式处理器中拥有两个或更多核心正变得越来越常见, 这给并发增加了额外的复杂性. 包括 <code>cortex_m::interrupt::Mutex</code> 在内的所有使用临界区的示例都假设另一个执行线程是中断线程, 但在多核系统上情况就不再是这样了. 相反, 我们需要为多核设计的同步原语 (也称为 SMP, 即对称多处理 (Symmetric Multi-Processing)).</p>
+<p>这些原语通常使用我们前面见过的原子指令, 因为处理系统会确保在所有核心之间都保持原子性.</p>
+<p>详细讨论这些主题超出了本书的范围, 但总体模式与单核情况相同.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../portability/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../collections/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../portability/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../collections/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

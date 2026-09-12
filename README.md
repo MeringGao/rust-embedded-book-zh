@@ -1,5 +1,7 @@
 # The Embedded Rust Book
 
+> [中文版在线阅读](https://meringgao.github.io/rust-embedded-book-zh/)
+
 > Documentation on how to use the Rust Programming Language to develop firmware for bare metal (microcontroller) devices
 
 This project is developed and maintained by the [Resources team][team].
